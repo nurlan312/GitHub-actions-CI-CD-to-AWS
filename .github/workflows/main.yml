@@ -1,0 +1,50 @@
+
+name: CI-CD-Pipelina-to-AWS-ElasticBeanstalk
+env:
+  EB_PACKAGE_S3_BUCKET_NAME : "bucket-github-actions-test"
+  EB_APPLICATION_NAME       : "GitHub-Actions-Elastic-Beanstalk"
+  EB_ENVIRONMENT_NAME       : "GitHub-Actions-Elastic-Beanstalk-env"
+  DEPLOY_PACKAGE_NAME       : "flask_app_${{ github.sha }}.zip"
+  AWS_REGION_NAME           : "eu-north-1"
+
+on:
+  push:
+    branches: 
+      - master
+
+#   workflow_dispatch:
+
+jobs:
+  my_ci_part:
+    runs-on: ubuntu-latest
+
+    steps:
+     - name: Git clone our repo
+       uses: actions/checkout@v1
+       
+     - name: Create ZIP deployment package
+       run : zip -r ${{ env.DEPLOY_PACKAGE_NAME }} ./ -x *.git*
+       
+       
+     - name: Configure my AWS Credentials
+       uses: aws-actions/configure-aws-credentials@v1
+       with:
+         aws-access-key-id     : ${{ secrets.MY_AWS_ACCESS_KEY }}
+         aws-secret-access-key : ${{ secrets.MY_AWS_SECRET_KEY }} 
+         aws-region            : ${{ env.AWS_REGION_NAME }}
+         
+     - name: Copy Deployment package to S3 bucket
+       run : aws s3 cp ${{ env.DEPLOY_PACKAGE_NAME }}  s3://${{ env.EB_PACKAGE_S3_BUCKET_NAME }}/
+       
+     - name: Priny Happy Message for CI finish
+       run : echo "CI Pileline part finished successfully!"
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
