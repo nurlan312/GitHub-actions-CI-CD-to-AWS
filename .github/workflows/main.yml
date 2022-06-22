@@ -1,9 +1,9 @@
 
 name: CI-CD-Pipelina-to-AWS-ElasticBeanstalk
 env:
-  EB_PACKAGE_S3_BUCKET_NAME : "github-test-actions-aws"
-  EB_APPLICATION_NAME       : "GitHub-Actions-Elastic-Beanstalk"
-  EB_ENVIRONMENT_NAME       : "Githubactionselasticbeanstalk-env"
+  EB_PACKAGE_S3_BUCKET_NAME : "bucket-github-actions-test1"
+  EB_APPLICATION_NAME       : "GitHub-Actions-Elastic-Beanstalk1"
+  EB_ENVIRONMENT_NAME       : "Githubactionselasticbeanstalk1-env"
   DEPLOY_PACKAGE_NAME       : "deploy_package_name_${{ github.sha }}.zip"
   AWS_REGION_NAME           : "eu-central-1"
 
