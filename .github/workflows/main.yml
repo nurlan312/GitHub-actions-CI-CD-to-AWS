@@ -3,7 +3,7 @@ env:
   EB_PACKAGE_S3_BUCKET_NAME : "github-ci-cd"
   EB_APPLICATION_NAME       : "github-ci-cd"
   EB_ENVIRONMENT_NAME       : "Githubcicd-env"
-  DEPLOY_PACKAGE_NAME       : "deploy_${{ github.sha }}.yml"
+  DEPLOY_PACKAGE_NAME       : "deploy_${{ github.sha }}.jar"
   AWS_REGION_NAME           : "eu-central-1"
 
 on:
