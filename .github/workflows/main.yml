@@ -21,7 +21,7 @@ jobs:
      - name: Git clone our repo
        uses: actions/checkout@v3
        
-#      - name: Create ZIP deployment package
+#      - name: Create JAR deployment package
 #        run : jar -r ${{ env.DEPLOY_PACKAGE_NAME }} ./ -x *.git*
 
      - name: Set up JDK 
