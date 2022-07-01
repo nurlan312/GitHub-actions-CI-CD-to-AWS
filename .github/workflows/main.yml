@@ -24,7 +24,7 @@ jobs:
 #        run: mvn -B package --file pom.xml
        run: mvn -X clean install
        
-     - name: Step 4 - Sey up a cache for Maven  
+     - name: Step 4 - Set up a cache for Maven  
        uses: actions/cache@v2
        with:
          path: ~/.m2
