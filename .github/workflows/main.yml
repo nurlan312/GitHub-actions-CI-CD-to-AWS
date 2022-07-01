@@ -3,8 +3,9 @@ name: Gentting started
 
 on: 
   push:
-      branches: 
-             - master
+      branches:
+           - master
+           
          
 jobs: 
   build: 
@@ -12,7 +13,7 @@ jobs:
     
     steps:
 #      - name: Praverka vetki]
-     - uses: actions/chechout@v2
+     - uses: actions/checkout@v2
        
      - name: Run a one-line script 
        run : env
