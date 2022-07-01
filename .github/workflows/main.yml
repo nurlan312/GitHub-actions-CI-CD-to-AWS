@@ -1,0 +1,119 @@
+name: Falcon CI/CD
+
+on:
+  push:
+    branches: [ master ]
+# pull_request:
+#  branches: [ master ]
+
+jobs:
+#  build-and-test:
+#    if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
+    name: Build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+          settings-path: ${{ github.workspace }} # location for the settings.xml file
+      - name: Setup Maven settings.xml
+        uses: whelk-io/maven-settings-xml-action@v11
+        with:
+          servers:
+            '[
+                  {
+                    "id": "github",
+                     "username": "${env.RELEASE_USERNAME}",
+                      "password": "${env.RELEASE_TOKEN}"
+              }
+            ]'
+      - name: Build with Maven
+        env:
+          RELEASE_USERNAME: ${{ secrets.RELEASE_USERNAME }}
+          RELEASEY_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          BUILD_ENV: 'github-actions'
+        run: mvn clean install
+
+  generate-jar:
+    if: ${{ github.event_name == 'push' }}
+    needs: build-and-test
+    name: Generate Jar
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '17'
+      - name: Setup Maven settings.xml
+        uses: whelk-io/maven-settings-xml-action@v11
+        with:
+          servers:
+            '[
+                  {
+                    "id": "github",
+                    "username": "${env.RELEASE_USERNAME}",
+                    "password": "${env.RELEASE_TOKEN}"
+                  }
+                ]'
+      - name: Cache Maven packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build with Maven
+        env:
+          RELEASE_USERNAME: ${{ secrets.RELEASE_USERNAME }}
+          RELEASEY_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          BUILD_ENV: 'github-actions'
+        run: mvn -B package -DskipTests --file pom.xml
+      - name: Upload JAR
+        uses: actions/upload-artifact@v2
+        with:
+          name: artifact
+          path: target/leaf-0.0.1-SNAPSHOT.jar
+
+  deploy:
+    if: ${{ github.event_name == 'push' }}
+    needs: generate-jar
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download JAR
+        uses: actions/download-artifact@v2
+        with:
+          name: artifact
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v13
+        with:
+          aws_access_key: ${{ secrets.MY_AWS_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.MY_AWS_ACCESS_KEY }}
+          use_existing_version_if_available: true
+          application_name: application
+          environment_name: environment-env
+          version_label: ${{github.SHA}}
+          region: us-east-1
+          deployment_package: leaf-0.0.1-SNAPSHOT.jar
+
+  remove-artifact:
+    if: ${{ github.event_name == 'push' }}
+    needs: deploy
+    name: Remove local artifact
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Remove local artifact
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          name: artifact
