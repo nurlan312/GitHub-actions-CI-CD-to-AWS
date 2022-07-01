@@ -21,8 +21,8 @@ jobs:
        
      - name: Step 3 - Have GitHub actions build maven project
 #        run : mvn -DskipTests clean install
-#        run: mvn -B package --file pom.xml
-       run: mvn -X clean install
+       run: mvn -B package --file pom.xml
+#        run: mvn -X clean install
        
      - name: Step 4 - Set up a cache for Maven  
        uses: actions/cache@v2
