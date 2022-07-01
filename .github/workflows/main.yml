@@ -19,7 +19,7 @@ jobs:
        with: 
           java-version: '17'
        
-     - name: Step 3 - Have GitHub actions build maven project 
+     - name: Step 3 - Have GitHub actions build maven project
        run : mvn -B package --file pom.xml
        
      - name: Step 4 - Sey up a cache for Maven  
