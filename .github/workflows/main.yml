@@ -1,0 +1,22 @@
+
+name: Gentting started
+
+on: 
+  push:
+      branches: 
+             - master
+         
+jobs: 
+  build: 
+    runs-on: ubuntu-latest
+    
+    steps:
+     - name: Praverka vetki]
+       uses: actions/chechout@v2
+       
+     - name: Run a one-line script 
+       run : env
+       
+     - name: Run a multi-lina scripts
+       run : |
+         echo Nothing to see in the multi-script
