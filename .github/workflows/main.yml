@@ -46,4 +46,4 @@ jobs:
           environment_name: Githubcicd-env
           version_label: ${{github.SHA}}
           region: eu-central-1
-          deployment_package: target  
+#           deployment_package: target  
