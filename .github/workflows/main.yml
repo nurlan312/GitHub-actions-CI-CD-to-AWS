@@ -42,8 +42,8 @@ jobs:
           aws_secret_key: ${{ secrets.MY_AWS_SECRET_KEY }}
           #aws_session_token: ${{ secrets.AWS_SESSION_TOKEN }}
           use_existing_version_if_available: false
-          application_name: github-ci-cd
-          environment_name: Githubcicd-env
+          application_name: spring-security-mvs
+          environment_name: Springsecuritymvs-env
           version_label: ${{github.SHA}}
           region: eu-central-1 
           deployment_package: GitHub-actions-CI-CD-to-AWS-0.0.1-SNAPSHOT.jar
