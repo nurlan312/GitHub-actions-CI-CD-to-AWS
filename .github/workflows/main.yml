@@ -22,7 +22,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: artifact
-          path: target/GitHub-actions-CI-CD-to-AWS.jar
+          path: target/gitHub-actions-CI-CD-to-AWS.jar
 #           path: target/jar-file.jar 
           
   deploy:
