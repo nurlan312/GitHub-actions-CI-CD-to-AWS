@@ -22,7 +22,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: artifact
-          path: target/gitHub-actions-CI-CD-to-AWS.jar
+          path: target/gitHub-actions-CI-CD-to-AWS-0.0.1-SNAPSHOT.jar
 #           path: target/jar-file.jar 
           
   deploy:
@@ -46,4 +46,4 @@ jobs:
           environment_name: Environmentname-env
           version_label: ${{ github.SHA }}
           region: eu-central-1 
-          deployment_package: target/gitHub-actions-CI-CD-to-AWS.jar
+          deployment_package: target/gitHub-actions-CI-CD-to-AWS-0.0.1-SNAPSHOT.jar
