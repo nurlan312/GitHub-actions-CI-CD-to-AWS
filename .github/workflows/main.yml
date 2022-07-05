@@ -41,7 +41,7 @@ jobs:
           aws_access_key: ${{ secrets.MY_AWS_ACCESS_KEY }}
           aws_secret_key: ${{ secrets.MY_AWS_SECRET_KEY }}
           #aws_session_token: ${{ secrets.AWS_SESSION_TOKEN }}
-          use_existing_version_if_available: false
+          use_existing_version_if_available: true
           application_name: application-name
           environment_name: Environmentname-env
           version_label: ${{ github.SHA }}
