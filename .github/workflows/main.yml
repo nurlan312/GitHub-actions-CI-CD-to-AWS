@@ -46,4 +46,4 @@ jobs:
           environment_name: Environmentname-env
           version_label: ${{ github.SHA }}
           region: eu-central-1 
-          deployment_package: target/GitHub-actions-CI-CD-to-AWS.jar
+          deployment_package: target/gitHub-actions-CI-CD-to-AWS.jar
