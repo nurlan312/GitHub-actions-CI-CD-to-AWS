@@ -1,50 +1,49 @@
-
-name: CI-CD-Pipelina-to-AWS-ElasticBeanstalk
-env:
-  EB_PACKAGE_S3_BUCKET_NAME : "bucket-github-actions-test"
-  EB_APPLICATION_NAME       : "GitHub-Actions-Elastic-Beanstalk"
-  EB_ENVIRONMENT_NAME       : "GitHub-Actions-Elastic-Beanstalk-env"
-  DEPLOY_PACKAGE_NAME       : "flask_app_${{ github.sha }}.zip"
-  AWS_REGION_NAME           : "eu-north-1"
-
+name: Deployment
 on:
   push:
-    branches: 
+    branches:
       - master
-
-#   workflow_dispatch:
-
+#   pull_request:
+#     branches:
+#       - main
 jobs:
-  my_ci_part:
+  build:
+    name: Build
     runs-on: ubuntu-latest
-
     steps:
-     - name: Git clone our repo
-       uses: actions/checkout@v1
-       
-     - name: Create ZIP deployment package
-       run : zip -r ${{ env.DEPLOY_PACKAGE_NAME }} ./ -x *.git*
-       
-       
-     - name: Configure my AWS Credentials
-       uses: aws-actions/configure-aws-credentials@v1
-       with:
-         aws-access-key-id     : ${{ secrets.MY_AWS_ACCESS_KEY }}
-         aws-secret-access-key : ${{ secrets.MY_AWS_SECRET_KEY }} 
-         aws-region            : ${{ env.AWS_REGION_NAME }}
-         
-     - name: Copy Deployment package to S3 bucket
-       run : aws s3 cp ${{ env.DEPLOY_PACKAGE_NAME }}  s3://${{ env.EB_PACKAGE_S3_BUCKET_NAME }}/
-       
-     - name: Priny Happy Message for CI finish
-       run : echo "CI Pileline part finished successfully!"
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
+      - uses: actions/checkout@v1
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '17'
+      - name: Build with Maven
+        run: mvn -B package -DskipTests --file pom.xml
+      - name: Upload JAR
+        uses: actions/upload-artifact@v2
+        with:
+          name: artifact
+          path: target/GitHub-actions-CI-CD-to-AWS-0.0.1-SNAPSHOT.jar
+          #           path: target/jar-file.jar
+
+  deploy:
+    needs: build
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download JAR
+        uses: actions/download-artifact@v2
+        with:
+          name: artifact
+      #Deploy the artifact (JAR) into AWS Beanstalk
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v13
+        with:
+          aws_access_key: ${{ secrets.MY_AWS_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.MY_AWS_SECRET_KEY }}
+          #aws_session_token: ${{ secrets.AWS_SESSION_TOKEN }}
+          use_existing_version_if_available: false
+          application_name: application-name
+          environment_name: Environmentname-env
+          version_label: ${{github.SHA}}
+          region: eu-central-1
+          deployment_package: target/GitHub-actions-CI-CD-to-AWS-0.0.1-SNAPSHOT.jar
